@@ -1,0 +1,37 @@
+{
+  "model_id": "logistic_regression_clf_20250918_135522",
+  "model_type": "logistic_regression_classifier",
+  "training_metrics": {
+    "accuracy": 0.99,
+    "precision": 0.9900916171375453,
+    "recall": 0.99,
+    "f1_score": 0.9900087656302804,
+    "cross_val_scores": [
+      0.9887640449438202,
+      0.9812734082397003,
+      0.981203007518797
+    ]
+  },
+  "validation_metrics": {
+    "accuracy": 0.985,
+    "precision": 0.9856521739130435,
+    "recall": 0.985,
+    "f1_score": 0.9850721120984278,
+    "cross_val_scores": [
+      0.9701492537313433,
+      0.8955223880597015,
+      0.9242424242424242
+    ]
+  },
+  "feature_names": [
+    "feature_1",
+    "feature_2",
+    "feature_3",
+    "feature_4"
+  ],
+  "target_name": "target",
+  "created_at": "2025-09-18T13:55:22.095537",
+  "training_data_size": 800,
+  "test_data_size": 200,
+  "model_file_path": "models/logistic_regression_clf_20250918_135522.joblib"
+}

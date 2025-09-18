@@ -1,0 +1,613 @@
+{% extends "base.html" %}
+
+{% block title %}API Documentation & Testing - ML Monitoring{% endblock %}
+
+{% block content %}
+<!-- API Documentation Header -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>API Documentation & Testing</h2>
+        <p class="text-muted">Interactive API documentation with live testing capabilities.</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <button class="btn btn-outline-info" id="health-check-btn">
+            <i class="fas fa-heartbeat"></i> Health Check
+        </button>
+        <button class="btn btn-outline-secondary" id="load-sample-data-btn">
+            <i class="fas fa-download"></i> Load Sample Data
+        </button>
+    </div>
+</div>
+
+<!-- Health Status Banner -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-info d-none" id="health-status-banner">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-heartbeat me-2"></i>
+                <span id="health-status-text">Checking API health...</span>
+                <div class="ms-auto">
+                    <small id="health-check-time" class="text-muted"></small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- API Documentation Tabs -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs" id="api-docs-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="endpoints-tab" data-bs-toggle="tab" data-bs-target="#endpoints" type="button" role="tab">
+                            <i class="fas fa-list"></i> Endpoints
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="examples-tab" data-bs-toggle="tab" data-bs-target="#examples" type="button" role="tab">
+                            <i class="fas fa-code"></i> Examples
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="testing-tab" data-bs-toggle="tab" data-bs-target="#testing" type="button" role="tab">
+                            <i class="fas fa-flask"></i> Live Testing
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content" id="api-docs-content">
+                    <!-- Endpoints Documentation -->
+                    <div class="tab-pane fade show active" id="endpoints" role="tabpanel">
+                        <div class="row">
+                            <div class="col-12">
+                                <h5 class="mb-3">Available API Endpoints</h5>
+                            </div>
+                        </div>
+                        
+                        <!-- Health Check Endpoints -->
+                        <div class="endpoint-section mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="badge bg-success me-2">GET</span>
+                                <code class="fs-6">/health</code>
+                                <button class="btn btn-sm btn-outline-primary ms-auto test-endpoint-btn" data-endpoint="health">
+                                    <i class="fas fa-play"></i> Test
+                                </button>
+                            </div>
+                            <p class="text-muted">Basic health check of the API service.</p>
+                            <div class="response-example">
+                                <strong>Response:</strong>
+                                <pre class="bg-light p-2 rounded"><code>{
+  "status": "healthy",
+  "timestamp": "2025-09-18T14:08:21.972372",
+  "service": "ML Prediction API",
+  "version": "1.0.0"
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="endpoint-section mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="badge bg-success me-2">GET</span>
+                                <code class="fs-6">/health/detailed</code>
+                                <button class="btn btn-sm btn-outline-primary ms-auto test-endpoint-btn" data-endpoint="health-detailed">
+                                    <i class="fas fa-play"></i> Test
+                                </button>
+                            </div>
+                            <p class="text-muted">Detailed health check with component status information.</p>
+                            <div class="response-example">
+                                <strong>Response:</strong>
+                                <pre class="bg-light p-2 rounded"><code>{
+  "status": "healthy",
+  "timestamp": "2025-09-18T14:08:21.972372",
+  "service": "ML Prediction API",
+  "version": "1.0.0",
+  "components": {
+    "models": {"status": "healthy", "total_models": 4},
+    "monitoring": {"status": "healthy"},
+    "retraining": {"status": "healthy"},
+    "filesystem": {"status": "healthy"}
+  }
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="endpoint-section mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="badge bg-success me-2">GET</span>
+                                <code class="fs-6">/health/readiness</code>
+                                <button class="btn btn-sm btn-outline-primary ms-auto test-endpoint-btn" data-endpoint="health-readiness">
+                                    <i class="fas fa-play"></i> Test
+                                </button>
+                            </div>
+                            <p class="text-muted">Readiness check - verifies service is ready to serve requests.</p>
+                        </div>
+
+                        <div class="endpoint-section mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="badge bg-success me-2">GET</span>
+                                <code class="fs-6">/health/liveness</code>
+                                <button class="btn btn-sm btn-outline-primary ms-auto test-endpoint-btn" data-endpoint="health-liveness">
+                                    <i class="fas fa-play"></i> Test
+                                </button>
+                            </div>
+                            <p class="text-muted">Liveness check - verifies service is alive and responding.</p>
+                        </div>
+
+                        <!-- Model Status Endpoint -->
+                        <div class="endpoint-section mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="badge bg-success me-2">GET</span>
+                                <code class="fs-6">/model/status</code>
+                                <button class="btn btn-sm btn-outline-primary ms-auto test-endpoint-btn" data-endpoint="model-status">
+                                    <i class="fas fa-play"></i> Test
+                                </button>
+                            </div>
+                            <p class="text-muted">Get information about available models and current active model.</p>
+                            <div class="response-example">
+                                <strong>Response:</strong>
+                                <pre class="bg-light p-2 rounded"><code>{
+  "status": "healthy",
+  "total_models": 4,
+  "current_model": {
+    "model_id": "random_forest_clf_20250918_135521",
+    "model_type": "random_forest_classifier",
+    "created_at": "2025-09-18T13:55:21.981608",
+    "validation_accuracy": 0.955,
+    "feature_names": ["feature_1", "feature_2", "feature_3", "feature_4"]
+  },
+  "available_models": [...]
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Prediction Endpoint -->
+                        <div class="endpoint-section mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="badge bg-primary me-2">POST</span>
+                                <code class="fs-6">/predict</code>
+                                <button class="btn btn-sm btn-outline-primary ms-auto test-endpoint-btn" data-endpoint="predict">
+                                    <i class="fas fa-play"></i> Test
+                                </button>
+                            </div>
+                            <p class="text-muted">Make predictions using the active model.</p>
+                            <div class="request-example mb-2">
+                                <strong>Request Body:</strong>
+                                <pre class="bg-light p-2 rounded"><code>{
+  "features": {
+    "feature_1": 1.5,
+    "feature_2": 2.0,
+    "feature_3": 1.2,
+    "feature_4": 0.8
+  },
+  "model_id": "optional_specific_model_id"
+}</code></pre>
+                            </div>
+                            <div class="response-example">
+                                <strong>Response:</strong>
+                                <pre class="bg-light p-2 rounded"><code>{
+  "prediction": "class_a",
+  "model_id": "random_forest_clf_20250918_135521",
+  "model_type": "random_forest_classifier",
+  "confidence": 0.85,
+  "response_time_ms": 150,
+  "request_id": "req_1726665501972"
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Metrics Endpoint -->
+                        <div class="endpoint-section mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="badge bg-success me-2">GET</span>
+                                <code class="fs-6">/metrics</code>
+                                <button class="btn btn-sm btn-outline-primary ms-auto test-endpoint-btn" data-endpoint="metrics">
+                                    <i class="fas fa-play"></i> Test
+                                </button>
+                            </div>
+                            <p class="text-muted">Get comprehensive monitoring metrics and dashboard data.</p>
+                            <div class="parameters mb-2">
+                                <strong>Query Parameters:</strong>
+                                <ul class="list-unstyled ms-3">
+                                    <li><code>model_id</code> (optional) - Filter metrics for specific model</li>
+                                    <li><code>hours</code> (optional) - Time range in hours (default: 24)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Retraining Endpoint -->
+                        <div class="endpoint-section mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="badge bg-primary me-2">POST</span>
+                                <code class="fs-6">/model/retrain</code>
+                                <button class="btn btn-sm btn-outline-primary ms-auto test-endpoint-btn" data-endpoint="retrain">
+                                    <i class="fas fa-play"></i> Test
+                                </button>
+                            </div>
+                            <p class="text-muted">Trigger manual model retraining.</p>
+                            <div class="request-example">
+                                <strong>Request Body:</strong>
+                                <pre class="bg-light p-2 rounded"><code>{
+  "model_id": "model_identifier",
+  "notes": "optional notes about retraining"
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Alerts Endpoint -->
+                        <div class="endpoint-section mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="badge bg-success me-2">GET</span>
+                                <code class="fs-6">/alerts</code>
+                                <button class="btn btn-sm btn-outline-primary ms-auto test-endpoint-btn" data-endpoint="alerts">
+                                    <i class="fas fa-play"></i> Test
+                                </button>
+                            </div>
+                            <p class="text-muted">Get active alerts for monitoring.</p>
+                            <div class="parameters mb-2">
+                                <strong>Query Parameters:</strong>
+                                <ul class="list-unstyled ms-3">
+                                    <li><code>model_id</code> (optional) - Filter alerts for specific model</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Code Examples -->
+                    <div class="tab-pane fade" id="examples" role="tabpanel">
+                        <h5 class="mb-3">Code Examples</h5>
+                        
+                        <!-- Python Example -->
+                        <div class="example-section mb-4">
+                            <h6><i class="fab fa-python"></i> Python (requests)</h6>
+                            <pre class="bg-dark text-light p-3 rounded"><code>import requests
+import json
+
+# API base URL
+base_url = "http://localhost:5000"
+
+# Health check
+response = requests.get(f"{base_url}/health")
+print("Health:", response.json())
+
+# Get model status
+response = requests.get(f"{base_url}/model/status")
+print("Models:", response.json())
+
+# Make prediction
+data = {
+    "features": {
+        "feature_1": 1.5,
+        "feature_2": 2.0,
+        "feature_3": 1.2,
+        "feature_4": 0.8
+    }
+}
+
+response = requests.post(
+    f"{base_url}/predict",
+    json=data,
+    headers={'Content-Type': 'application/json'}
+)
+
+if response.status_code == 200:
+    result = response.json()
+    print(f"Prediction: {result['prediction']}")
+    print(f"Confidence: {result.get('confidence', 'N/A')}")
+else:
+    print(f"Error: {response.text}")
+</code></pre>
+                        </div>
+
+                        <!-- JavaScript Example -->
+                        <div class="example-section mb-4">
+                            <h6><i class="fab fa-js"></i> JavaScript (fetch)</h6>
+                            <pre class="bg-dark text-light p-3 rounded"><code>// API base URL
+const baseUrl = "http://localhost:5000";
+
+// Health check
+async function checkHealth() {
+    const response = await fetch(`${baseUrl}/health`);
+    const data = await response.json();
+    console.log("Health:", data);
+}
+
+// Make prediction
+async function makePrediction() {
+    const data = {
+        features: {
+            feature_1: 1.5,
+            feature_2: 2.0,
+            feature_3: 1.2,
+            feature_4: 0.8
+        }
+    };
+
+    try {
+        const response = await fetch(`${baseUrl}/predict`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log(`Prediction: ${result.prediction}`);
+            console.log(`Confidence: ${result.confidence || 'N/A'}`);
+        } else {
+            const error = await response.json();
+            console.error('Error:', error);
+        }
+    } catch (error) {
+        console.error('Network error:', error);
+    }
+}
+</code></pre>
+                        </div>
+
+                        <!-- cURL Example -->
+                        <div class="example-section mb-4">
+                            <h6><i class="fas fa-terminal"></i> cURL</h6>
+                            <pre class="bg-dark text-light p-3 rounded"><code># Health check
+curl -X GET http://localhost:5000/health
+
+# Get model status
+curl -X GET http://localhost:5000/model/status
+
+# Make prediction
+curl -X POST http://localhost:5000/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "features": {
+      "feature_1": 1.5,
+      "feature_2": 2.0,
+      "feature_3": 1.2,
+      "feature_4": 0.8
+    }
+  }'
+
+# Get metrics
+curl -X GET "http://localhost:5000/metrics?hours=24"
+</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Live Testing -->
+                    <div class="tab-pane fade" id="testing" role="tabpanel">
+                        <h5 class="mb-3">Interactive API Testing</h5>
+                        <p class="text-muted">Test API endpoints directly from this interface.</p>
+                        
+                        <!-- Quick Test Results -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="card border-info">
+                                    <div class="card-header bg-info text-white">
+                                        <h6 class="mb-0"><i class="fas fa-vial"></i> Quick Test Results</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="quick-test-results">
+                                            <div class="text-center text-muted">
+                                                <i class="fas fa-flask"></i>
+                                                <p class="mt-2">Click "Test" buttons above to see results here</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Prediction Testing -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Test Prediction API</h5>
+            </div>
+            <div class="card-body">
+                <form id="prediction-test-form">
+                    <div class="mb-3">
+                        <label for="model-id-input" class="form-label">Model ID (optional)</label>
+                        <select class="form-select" id="model-id-input">
+                            <option value="">Use latest model</option>
+                        </select>
+                        <div class="form-text">Leave empty to use the most recent model</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="features-input" class="form-label">Input Features (JSON)</label>
+                        <textarea class="form-control" id="features-input" rows="8" 
+                                  placeholder='{"feature_1": 1.0, "feature_2": 2.0, "feature_3": 3.0}'></textarea>
+                        <div class="form-text">Enter feature values as JSON object</div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="test-prediction-btn">
+                        <i class="fas fa-play"></i> Test Prediction
+                    </button>
+                    
+                    <button type="button" class="btn btn-outline-secondary" id="clear-input-btn">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Response</h5>
+            </div>
+            <div class="card-body">
+                <div id="prediction-response">
+                    <div class="text-muted text-center">
+                        <i class="fas fa-arrow-left"></i>
+                        <p class="mt-2">Submit a prediction request to see the response</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sample Data Templates -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Sample Data Templates</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card border-secondary">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0">Iris Classification</h6>
+                            </div>
+                            <div class="card-body">
+                                <pre class="small"><code>{
+  "sepal_length": 5.1,
+  "sepal_width": 3.5,
+  "petal_length": 1.4,
+  "petal_width": 0.2
+}</code></pre>
+                                <button class="btn btn-sm btn-outline-primary load-sample-btn" 
+                                        data-sample="iris">Load Sample</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card border-secondary">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0">Binary Classification</h6>
+                            </div>
+                            <div class="card-body">
+                                <pre class="small"><code>{
+  "feature_1": 1.5,
+  "feature_2": -0.8,
+  "feature_3": 2.1,
+  "feature_4": 0.3
+}</code></pre>
+                                <button class="btn btn-sm btn-outline-primary load-sample-btn" 
+                                        data-sample="classification">Load Sample</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card border-secondary">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0">Regression</h6>
+                            </div>
+                            <div class="card-body">
+                                <pre class="small"><code>{
+  "x1": 10.5,
+  "x2": 25.3,
+  "x3": -5.7,
+  "x4": 8.9
+}</code></pre>
+                                <button class="btn btn-sm btn-outline-primary load-sample-btn" 
+                                        data-sample="regression">Load Sample</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Batch Testing -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Batch Testing</h5>
+                <button class="btn btn-outline-primary" id="run-batch-test-btn">
+                    <i class="fas fa-play"></i> Run Batch Test
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="batch-size" class="form-label">Number of Requests</label>
+                            <input type="number" class="form-control" id="batch-size" value="10" min="1" max="100">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="batch-delay" class="form-label">Delay Between Requests (ms)</label>
+                            <input type="number" class="form-control" id="batch-delay" value="100" min="0" max="5000">
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div id="batch-progress" class="d-none">
+                            <div class="mb-2">
+                                <label class="form-label">Progress</label>
+                                <div class="progress">
+                                    <div class="progress-bar" id="batch-progress-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="small text-muted">
+                                <span id="batch-status">Ready to start</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="batch-results" class="mt-3 d-none">
+                    <h6>Batch Test Results</h6>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h4 id="batch-success-count" class="text-success">0</h4>
+                                <small class="text-muted">Successful</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h4 id="batch-error-count" class="text-danger">0</h4>
+                                <small class="text-muted">Errors</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h4 id="batch-avg-time" class="text-info">0ms</h4>
+                                <small class="text-muted">Avg Response</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h4 id="batch-total-time" class="text-warning">0s</h4>
+                                <small class="text-muted">Total Time</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Initialize API test page when loaded
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof ApiTestPage !== 'undefined') {
+        ApiTestPage.init();
+    }
+});
+</script>
+{% endblock %}

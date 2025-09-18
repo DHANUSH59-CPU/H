@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Prediction API Documentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .endpoint-method {
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+        .method-get { background-color: #28a745; color: white; }
+        .method-post { background-color: #007bff; color: white; }
+        .method-put { background-color: #ffc107; color: black; }
+        .method-delete { background-color: #dc3545; color: white; }
+        
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+        
+        .dark-code {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            border: 1px solid #4a5568;
+        }
+        
+        .toc {
+            position: sticky;
+            top: 20px;
+        }
+        
+        .endpoint-section {
+            border-left: 4px solid #007bff;
+            padding-left: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .response-codes {
+            font-size: 0.9em;
+        }
+        
+        .response-codes .badge {
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Table of Contents -->
+            <div class="col-md-3">
+                <div class="toc">
+                    <h5>Table of Contents</h5>
+                    <nav class="nav flex-column">
+                        <a class="nav-link" href="#overview">Overview</a>
+                        <a class="nav-link" href="#authentication">Authentication</a>
+                        <a class="nav-link" href="#health-endpoints">Health Endpoints</a>
+                        <a class="nav-link" href="#model-endpoints">Model Endpoints</a>
+                        <a class="nav-link" href="#prediction-endpoints">Prediction Endpoints</a>
+                        <a class="nav-link" href="#monitoring-endpoints">Monitoring Endpoints</a>
+                        <a class="nav-link" href="#error-handling">Error Handling</a>
+                        <a class="nav-link" href="#examples">Code Examples</a>
+                    </nav>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9">
+                <div class="container">
+                    <!-- Header -->
+                    <div class="row mb-5">
+                        <div class="col-12">
+                            <h1><i class="fas fa-robot"></i> ML Prediction API Documentation</h1>
+                            <p class="lead">Complete API reference for the ML Model Deployment & Monitoring System</p>
+                            <div class="alert alert-info">
+                                <strong>Base URL:</strong> <code>http://localhost:5000</code><br>
+                                <strong>Content-Type:</strong> <code>application/json</code><br>
+                                <strong>Version:</strong> 1.0.0
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Overview -->
+                    <section id="overview" class="mb-5">
+                        <h2>Overview</h2>
+                        <p>The ML Prediction API provides endpoints for:</p>
+                        <ul>
+                            <li>Making predictions with trained ML models</li>
+                            <li>Managing and monitoring model performance</li>
+                            <li>Accessing system health and status information</li>
+                            <li>Triggering model retraining and deployment</li>
+                            <li>Retrieving monitoring metrics and alerts</li>
+                        </ul>
+                    </section>
+
+                    <!-- Authentication -->
+                    <section id="authentication" class="mb-5">
+                        <h2>Authentication</h2>
+                        <p>Currently, the API does not require authentication. In production environments, consider implementing API keys or OAuth2.</p>
+                    </section>
+
+                    <!-- Health Endpoints -->
+                    <section id="health-endpoints" class="mb-5">
+                        <h2>Health Endpoints</h2>
+                        
+                        <div class="endpoint-section">
+                            <h4><span class="endpoint-method method-get">GET</span> /health</h4>
+                            <p>Basic health check endpoint.</p>
+                            
+                            <h6>Response</h6>
+                            <div class="code-block">
+                                <pre><code>{
+  "status": "healthy",
+  "timestamp": "2025-09-18T14:08:21.972372",
+  "service": "ML Prediction API",
+  "version": "1.0.0"
+}</code></pre>
+                            </div>
+                            
+                            <div class="response-codes">
+                                <span class="badge bg-success">200</span> Success
+                            </div>
+                        </div>
+
+                        <div class="endpoint-section">
+                            <h4><span class="endpoint-method method-get">GET</span> /health/detailed</h4>
+                            <p>Detailed health check with component status.</p>
+                            
+                            <h6>Response</h6>
+                            <div class="code-block">
+                                <pre><code>{
+  "status": "healthy",
+  "timestamp": "2025-09-18T14:08:21.972372",
+  "service": "ML Prediction API",
+  "version": "1.0.0",
+  "components": {
+    "models": {
+      "status": "healthy",
+      "total_models": 4,
+      "current_model": {
+        "model_id": "random_forest_clf_20250918_135521",
+        "model_type": "random_forest_classifier",
+        "created_at": "2025-09-18T13:55:21.981608"
+      }
+    },
+    "monitoring": {
+      "status": "healthy",
+      "predictions_tracked": 150
+    },
+    "retraining": {
+      "status": "healthy",
+      "is_monitoring": true
+    },
+    "filesystem": {
+      "status": "healthy",
+      "model_directory": true,
+      "log_file_writable": true
+    }
+  }
+}</code></pre>
+                            </div>
+                            
+                            <div class="response-codes">
+                                <span class="badge bg-success">200</span> Healthy
+                                <span class="badge bg-warning">503</span> Unhealthy/Degraded
+                            </div>
+                        </div>
+
+                        <div class="endpoint-section">
+                            <h4><span class="endpoint-method method-get">GET</span> /health/readiness</h4>
+                            <p>Readiness check - verifies service is ready to serve requests.</p>
+                            
+                            <div class="response-codes">
+                                <span class="badge bg-success">200</span> Ready
+                                <span class="badge bg-warning">503</span> Not Ready
+                            </div>
+                        </div>
+
+                        <div class="endpoint-section">
+                            <h4><span class="endpoint-method method-get">GET</span> /health/liveness</h4>
+                            <p>Liveness check - verifies service is alive and responding.</p>
+                            
+                            <div class="response-codes">
+                                <span class="badge bg-success">200</span> Alive
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Model Endpoints -->
+                    <section id="model-endpoints" class="mb-5">
+                        <h2>Model Endpoints</h2>
+                        
+                        <div class="endpoint-section">
+                            <h4><span class="endpoint-method method-get">GET</span> /model/status</h4>
+                            <p>Get information about available models and current active model.</p>
+                            
+                            <h6>Response</h6>
+                            <div class="code-block">
+                                <pre><code>{
+  "status": "healthy",
+  "total_models": 4,
+  "current_model": {
+    "model_id": "random_forest_clf_20250918_135521",
+    "model_type": "random_forest_classifier",
+    "created_at": "2025-09-18T13:55:21.981608",
+    "validation_accuracy": 0.955,
+    "feature_names": ["feature_1", "feature_2", "feature_3", "feature_4"]
+  },
+  "available_models": [...]
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="endpoint-section">
+                            <h4><span class="endpoint-method method-post">POST</span> /model/retrain</h4>
+                            <p>Trigger manual model retraining.</p>
+                            
+                            <h6>Request Body</h6>
+                            <div class="code-block">
+                                <pre><code>{
+  "model_id": "model_identifier",
+  "notes": "optional notes about retraining"
+}</code></pre>
+                            </div>
+                            
+                            <div class="response-codes">
+                                <span class="badge bg-success">200</span> Retraining Started
+                                <span class="badge bg-danger">400</span> Invalid Request
+                            </div>
+                        </div>
+
+                        <div class="endpoint-section">
+                            <h4><span class="endpoint-method method-get">GET</span> /model/versions/{model_id}</h4>
+                            <p>Get version history for a specific model.</p>
+                            
+                            <h6>Path Parameters</h6>
+                            <ul>
+                                <li><code>model_id</code> - The ID of the model</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <!-- Prediction Endpoints -->
+                    <section id="prediction-endpoints" class="mb-5">
+                        <h2>Prediction Endpoints</h2>
+                        
+                        <div class="endpoint-section">
+                            <h4><span class="endpoint-method method-post">POST</span> /predict</h4>
+                            <p>Make predictions using the active model.</p>
+                            
+                            <h6>Request Body</h6>
+                            <div class="code-block">
+                                <pre><code>{
+  "features": {
+    "feature_1": 1.5,
+    "feature_2": 2.0,
+    "feature_3": 1.2,
+    "feature_4": 0.8
+  },
+  "model_id": "optional_specific_model_id"
+}</code></pre>
+                            </div>
+                            
+                            <h6>Response</h6>
+                            <div class="code-block">
+                                <pre><code>{
+  "prediction": "class_a",
+  "model_id": "random_forest_clf_20250918_135521",
+  "model_type": "random_forest_classifier",
+  "confidence": 0.85,
+  "response_time_ms": 150,
+  "request_id": "req_1726665501972"
+}</code></pre>
+                            </div>
+                            
+                            <div class="response-codes">
+                                <span class="badge bg-success">200</span> Prediction Success
+                                <span class="badge bg-danger">400</span> Invalid Input
+                                <span class="badge bg-warning">503</span> No Models Available
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Monitoring Endpoints -->
+                    <section id="monitoring-endpoints" class="mb-5">
+                        <h2>Monitoring Endpoints</h2>
+                        
+                        <div class="endpoint-section">
+                            <h4><span class="endpoint-method method-get">GET</span> /metrics</h4>
+                            <p>Get comprehensive monitoring metrics and dashboard data.</p>
+                            
+                            <h6>Query Parameters</h6>
+                            <ul>
+                                <li><code>model_id</code> (optional) - Filter metrics for specific model</li>
+                                <li><code>hours</code> (optional) - Time range in hours (default: 24)</li>
+                            </ul>
+                        </div>
+
+                        <div class="endpoint-section">
+                            <h4><span class="endpoint-method method-get">GET</span> /metrics/drift/{model_id}</h4>
+                            <p>Check for data drift in a specific model.</p>
+                            
+                            <h6>Path Parameters</h6>
+                            <ul>
+                                <li><code>model_id</code> - The ID of the model to check</li>
+                            </ul>
+                            
+                            <h6>Query Parameters</h6>
+                            <ul>
+                                <li><code>hours</code> (optional) - Time range for drift analysis (default: 1)</li>
+                            </ul>
+                        </div>
+
+                        <div class="endpoint-section">
+                            <h4><span class="endpoint-method method-get">GET</span> /alerts</h4>
+                            <p>Get active alerts for monitoring.</p>
+                            
+                            <h6>Query Parameters</h6>
+                            <ul>
+                                <li><code>model_id</code> (optional) - Filter alerts for specific model</li>
+                            </ul>
+                        </div>
+
+                        <div class="endpoint-section">
+                            <h4><span class="endpoint-method method-post">POST</span> /alerts/{alert_id}/resolve</h4>
+                            <p>Mark an alert as resolved.</p>
+                            
+                            <h6>Path Parameters</h6>
+                            <ul>
+                                <li><code>alert_id</code> - The ID of the alert to resolve</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <!-- Error Handling -->
+                    <section id="error-handling" class="mb-5">
+                        <h2>Error Handling</h2>
+                        <p>The API uses standard HTTP status codes and returns error information in JSON format.</p>
+                        
+                        <h4>Common Error Responses</h4>
+                        
+                        <div class="code-block">
+                            <h6>400 Bad Request - Invalid Input</h6>
+                            <pre><code>{
+  "error": "Invalid input features",
+  "details": ["Missing required features: ['feature_1', 'feature_2']"],
+  "expected_features": ["feature_1", "feature_2", "feature_3", "feature_4"],
+  "request_id": "req_1726665501972"
+}</code></pre>
+                        </div>
+
+                        <div class="code-block">
+                            <h6>404 Not Found - Model Not Found</h6>
+                            <pre><code>{
+  "error": "Model not found: invalid_model_id",
+  "request_id": "req_1726665501972"
+}</code></pre>
+                        </div>
+
+                        <div class="code-block">
+                            <h6>500 Internal Server Error</h6>
+                            <pre><code>{
+  "error": "Internal server error",
+  "details": "Error details here",
+  "response_time_ms": 150,
+  "request_id": "req_1726665501972"
+}</code></pre>
+                        </div>
+                    </section>
+
+                    <!-- Code Examples -->
+                    <section id="examples" class="mb-5">
+                        <h2>Code Examples</h2>
+                        
+                        <h4>Python (requests)</h4>
+                        <div class="code-block dark-code">
+                            <pre><code>import requests
+import json
+
+# API base URL
+base_url = "http://localhost:5000"
+
+# Health check
+response = requests.get(f"{base_url}/health")
+print("Health:", response.json())
+
+# Get model status
+response = requests.get(f"{base_url}/model/status")
+print("Models:", response.json())
+
+# Make prediction
+data = {
+    "features": {
+        "feature_1": 1.5,
+        "feature_2": 2.0,
+        "feature_3": 1.2,
+        "feature_4": 0.8
+    }
+}
+
+response = requests.post(
+    f"{base_url}/predict",
+    json=data,
+    headers={'Content-Type': 'application/json'}
+)
+
+if response.status_code == 200:
+    result = response.json()
+    print(f"Prediction: {result['prediction']}")
+    print(f"Confidence: {result.get('confidence', 'N/A')}")
+else:
+    print(f"Error: {response.text}")
+</code></pre>
+                        </div>
+
+                        <h4>JavaScript (fetch)</h4>
+                        <div class="code-block dark-code">
+                            <pre><code>// API base URL
+const baseUrl = "http://localhost:5000";
+
+// Health check
+async function checkHealth() {
+    const response = await fetch(`${baseUrl}/health`);
+    const data = await response.json();
+    console.log("Health:", data);
+}
+
+// Make prediction
+async function makePrediction() {
+    const data = {
+        features: {
+            feature_1: 1.5,
+            feature_2: 2.0,
+            feature_3: 1.2,
+            feature_4: 0.8
+        }
+    };
+
+    try {
+        const response = await fetch(`${baseUrl}/predict`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log(`Prediction: ${result.prediction}`);
+            console.log(`Confidence: ${result.confidence || 'N/A'}`);
+        } else {
+            const error = await response.json();
+            console.error('Error:', error);
+        }
+    } catch (error) {
+        console.error('Network error:', error);
+    }
+}
+</code></pre>
+                        </div>
+
+                        <h4>cURL</h4>
+                        <div class="code-block dark-code">
+                            <pre><code># Health check
+curl -X GET http://localhost:5000/health
+
+# Get model status
+curl -X GET http://localhost:5000/model/status
+
+# Make prediction
+curl -X POST http://localhost:5000/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "features": {
+      "feature_1": 1.5,
+      "feature_2": 2.0,
+      "feature_3": 1.2,
+      "feature_4": 0.8
+    }
+  }'
+
+# Get metrics
+curl -X GET "http://localhost:5000/metrics?hours=24"
+</code></pre>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

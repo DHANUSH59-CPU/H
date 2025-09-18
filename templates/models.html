@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block title %}Models - ML Monitoring{% endblock %}
+
+{% block content %}
+<!-- Model Management Header -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>Model Management</h2>
+        <p class="text-muted">Manage your ML models, trigger retraining, and view model details.</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <button class="btn btn-primary" id="train-new-model-btn">
+            <i class="fas fa-plus"></i> Train New Model
+        </button>
+        <button class="btn btn-outline-secondary" id="refresh-models-btn">
+            <i class="fas fa-sync"></i> Refresh
+        </button>
+    </div>
+</div>
+
+<!-- Current Model Status -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Current Active Model</h5>
+            </div>
+            <div class="card-body" id="current-model-info">
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading current model information...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Available Models -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Available Models</h5>
+                <span class="badge bg-secondary" id="models-count">0 models</span>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Model ID</th>
+                                <th>Type</th>
+                                <th>Created</th>
+                                <th>Accuracy</th>
+                                <th>Features</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="models-table">
+                            <tr>
+                                <td colspan="7" class="text-center">Loading models...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Training Controls -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Manual Training</h5>
+            </div>
+            <div class="card-body">
+                <form id="manual-training-form">
+                    <div class="mb-3">
+                        <label for="model-type" class="form-label">Model Type</label>
+                        <select class="form-select" id="model-type" required>
+                            <option value="">Select model type...</option>
+                            <option value="classifier">Classification</option>
+                            <option value="regressor">Regression</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="dataset-select" class="form-label">Dataset</label>
+                        <select class="form-select" id="dataset-select" required>
+                            <option value="">Select dataset...</option>
+                            <option value="sample_classification.csv">Sample Classification</option>
+                            <option value="sample_regression.csv">Sample Regression</option>
+                            <option value="sample_iris.csv">Iris Dataset</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="algorithm-select" class="form-label">Algorithm</label>
+                        <select class="form-select" id="algorithm-select" required>
+                            <option value="">Select algorithm...</option>
+                            <option value="random_forest">Random Forest</option>
+                            <option value="logistic_regression">Logistic Regression</option>
+                            <option value="linear_regression">Linear Regression</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="start-training-btn">
+                        <i class="fas fa-play"></i> Start Training
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Automated Retraining</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Performance Threshold</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="performance-threshold" 
+                               value="0.8" min="0" max="1" step="0.01">
+                        <span class="input-group-text">accuracy</span>
+                    </div>
+                    <div class="form-text">Trigger retraining when accuracy drops below this value</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Drift Threshold</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="drift-threshold" 
+                               value="0.1" min="0" max="1" step="0.01">
+                        <span class="input-group-text">drift score</span>
+                    </div>
+                    <div class="form-text">Trigger retraining when drift score exceeds this value</div>
+                </div>
+                
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="auto-retrain-enabled" checked>
+                    <label class="form-check-label" for="auto-retrain-enabled">
+                        Enable Automated Retraining
+                    </label>
+                </div>
+                
+                <button class="btn btn-outline-primary" id="save-retrain-settings-btn">
+                    <i class="fas fa-save"></i> Save Settings
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Training Progress Modal -->
+<div class="modal fade" id="trainingModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Model Training</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="training-progress">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Training...</span>
+                        </div>
+                        <p class="mt-2">Training model, please wait...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Model Details Modal -->
+<div class="modal fade" id="modelDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Model Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="model-details-content">
+                <!-- Model details will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Initialize models page when loaded
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof ModelsPage !== 'undefined') {
+        ModelsPage.init();
+    }
+});
+</script>
+{% endblock %}

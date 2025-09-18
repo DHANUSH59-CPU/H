@@ -1,0 +1,143 @@
+{
+  "versions": {
+    "test_model": [
+      {
+        "version_id": "test_model_v1_20250918_150354",
+        "model_id": "test_model",
+        "parent_version": null,
+        "version_number": 1,
+        "created_at": "2025-09-18T15:03:54.071690",
+        "training_metrics": {
+          "accuracy": 0.85,
+          "f1_score": 0.82
+        },
+        "validation_metrics": {
+          "accuracy": 0.83,
+          "f1_score": 0.8
+        },
+        "model_file_path": "models/test_model_v1.joblib",
+        "metadata_file_path": "models/test_model_v1_metadata.json",
+        "is_active": false,
+        "deployment_status": "pending",
+        "notes": "Initial version"
+      },
+      {
+        "version_id": "test_model_v2_20250918_150354",
+        "model_id": "test_model",
+        "parent_version": "test_model_v1_20250918_150354",
+        "version_number": 2,
+        "created_at": "2025-09-18T15:03:54.074442",
+        "training_metrics": {
+          "accuracy": 0.87,
+          "f1_score": 0.84
+        },
+        "validation_metrics": {
+          "accuracy": 0.85,
+          "f1_score": 0.82
+        },
+        "model_file_path": "models/test_model_v2.joblib",
+        "metadata_file_path": "models/test_model_v2_metadata.json",
+        "is_active": false,
+        "deployment_status": "pending",
+        "notes": "Retrained version"
+      }
+    ],
+    "trigger_test_model": [
+      {
+        "version_id": "trigger_test_model_v1_20250918_150354",
+        "model_id": "trigger_test_model",
+        "parent_version": null,
+        "version_number": 1,
+        "created_at": "2025-09-18T15:03:54.080083",
+        "training_metrics": {
+          "accuracy": 0.9
+        },
+        "validation_metrics": {
+          "accuracy": 0.88
+        },
+        "model_file_path": "models/trigger_test.joblib",
+        "metadata_file_path": "models/trigger_test_metadata.json",
+        "is_active": false,
+        "deployment_status": "pending",
+        "notes": "Test model for trigger testing"
+      }
+    ],
+    "workflow_test_model": [
+      {
+        "version_id": "workflow_test_model_v1_20250918_150354",
+        "model_id": "workflow_test_model",
+        "parent_version": null,
+        "version_number": 1,
+        "created_at": "2025-09-18T15:03:54.959375",
+        "training_metrics": {
+          "accuracy": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1_score": 1.0,
+          "cross_val_scores": [
+            0.9363295880149812,
+            0.9775280898876404,
+            0.9210526315789473
+          ]
+        },
+        "validation_metrics": {
+          "accuracy": 0.955,
+          "precision": 0.955221619176843,
+          "recall": 0.955,
+          "f1_score": 0.9550751879699247,
+          "cross_val_scores": [
+            0.8656716417910447,
+            0.8656716417910447,
+            0.8484848484848485
+          ]
+        },
+        "model_file_path": "models\\random_forest_clf_20250918_150354.joblib",
+        "metadata_file_path": "models\\random_forest_clf_20250918_150354_metadata.json",
+        "is_active": true,
+        "deployment_status": "deployed",
+        "notes": "Initial model for workflow test"
+      }
+    ],
+    "demo_model": [
+      {
+        "version_id": "demo_model_v1_20250918_150429",
+        "model_id": "demo_model",
+        "parent_version": null,
+        "version_number": 1,
+        "created_at": "2025-09-18T15:04:29.909063",
+        "training_metrics": {
+          "accuracy": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1_score": 1.0,
+          "cross_val_scores": [
+            0.9363295880149812,
+            0.9775280898876404,
+            0.9210526315789473
+          ]
+        },
+        "validation_metrics": {
+          "accuracy": 0.955,
+          "precision": 0.955221619176843,
+          "recall": 0.955,
+          "f1_score": 0.9550751879699247,
+          "cross_val_scores": [
+            0.8656716417910447,
+            0.8656716417910447,
+            0.8484848484848485
+          ]
+        },
+        "model_file_path": "models\\random_forest_clf_20250918_150429.joblib",
+        "metadata_file_path": "models\\random_forest_clf_20250918_150429_metadata.json",
+        "is_active": true,
+        "deployment_status": "deployed",
+        "notes": "Initial demo model"
+      }
+    ]
+  },
+  "active_versions": {
+    "workflow_test_model": "workflow_test_model_v1_20250918_150354",
+    "demo_model": "demo_model_v1_20250918_150429"
+  },
+  "last_updated": "2025-09-18T15:04:29.916449"
+}

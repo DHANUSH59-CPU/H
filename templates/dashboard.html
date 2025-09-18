@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - ML Monitoring{% endblock %}
+
+{% block content %}
+<!-- Alert Banner -->
+<div id="alert-banner" class="alert alert-warning alert-dismissible fade show d-none" role="alert">
+    <strong>Alert!</strong> <span id="alert-message"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+
+<!-- Status Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Active Models</h6>
+                        <h3 id="active-models-count">--</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-robot fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Predictions Today</h6>
+                        <h3 id="predictions-today">--</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-chart-bar fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Avg Response Time</h6>
+                        <h3 id="avg-response-time">--</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-clock fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Active Alerts</h6>
+                        <h3 id="active-alerts-count">--</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-exclamation-triangle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row mb-4">
+    <!-- Prediction Volume Chart -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Prediction Volume</h5>
+                <div class="btn-group btn-group-sm" role="group">
+                    <input type="radio" class="btn-check" name="volume-period" id="volume-1h" value="1" checked>
+                    <label class="btn btn-outline-primary" for="volume-1h">1H</label>
+                    
+                    <input type="radio" class="btn-check" name="volume-period" id="volume-6h" value="6">
+                    <label class="btn btn-outline-primary" for="volume-6h">6H</label>
+                    
+                    <input type="radio" class="btn-check" name="volume-period" id="volume-24h" value="24">
+                    <label class="btn btn-outline-primary" for="volume-24h">24H</label>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="predictionVolumeChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Model Performance Chart -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Model Performance</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="performanceChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Response Time and Drift Detection Row -->
+<div class="row mb-4">
+    <!-- Response Time Chart -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Response Time Trends</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="responseTimeChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Drift Detection -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Data Drift Detection</h5>
+                <button class="btn btn-sm btn-outline-primary" id="check-drift-btn">
+                    <i class="fas fa-sync"></i> Check Now
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="drift-status" class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Checking for data drift...</p>
+                </div>
+                <canvas id="driftChart" height="300" class="d-none"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Predictions and Alerts -->
+<div class="row">
+    <!-- Recent Predictions -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Recent Predictions</h5>
+                <button class="btn btn-sm btn-outline-primary" id="refresh-predictions-btn">
+                    <i class="fas fa-sync"></i> Refresh
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Model</th>
+                                <th>Prediction</th>
+                                <th>Confidence</th>
+                                <th>Response Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-predictions-table">
+                            <tr>
+                                <td colspan="5" class="text-center">Loading predictions...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Active Alerts -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Active Alerts</h5>
+                <button class="btn btn-sm btn-outline-primary" id="refresh-alerts-btn">
+                    <i class="fas fa-sync"></i> Refresh
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="alerts-list">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading alerts...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Initialize dashboard when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof Dashboard !== 'undefined') {
+        Dashboard.init();
+    }
+});
+</script>
+{% endblock %}
